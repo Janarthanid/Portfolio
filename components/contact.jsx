@@ -1,53 +1,45 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
+import emailjs from "@emailjs/browser"
 import { Mail, Phone, MapPin, Send } from "lucide-react"
 
 export default function Contact() {
+  const formRef = useRef()
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   })
 
-  const [status, setStatus] = useState(null) // null | sending | success | error
-  const [errorMessage, setErrorMessage] = useState("")
+  const [status, setStatus] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     setStatus("sending")
-    setErrorMessage("")
 
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      })
+    emailjs
+      .sendForm(
+        "service_yzp2lfe",   // ✅ Your Service ID
+        "7worc1a",           // ✅ Your Template ID
+        formRef.current,
+        "FDu1StKwCiM2mXtp0"    // ✅ Your Public Key
+      )
+      .then(
+        () => {
+          setStatus("success")
+          setFormData({ name: "", email: "", message: "" })
 
-      const data = await res.json()
+          setTimeout(() => setStatus(null), 4000)
+        },
+        (error) => {
+          console.error(error)
+          setStatus("error")
 
-      if (!res.ok) {
-        throw new Error(data.error || "Something went wrong")
-      }
-
-      setStatus("success")
-      setFormData({ name: "", email: "", message: "" })
-
-      setTimeout(() => {
-        setStatus(null)
-      }, 4000)
-
-    } catch (error) {
-      setStatus("error")
-      setErrorMessage(error.message)
-
-      setTimeout(() => {
-        setStatus(null)
-        setErrorMessage("")
-      }, 4000)
-    }
+          setTimeout(() => setStatus(null), 4000)
+        }
+      )
   }
 
   return (
@@ -109,17 +101,18 @@ export default function Contact() {
 
           {/* Contact Form */}
           <form
+            ref={formRef}
             onSubmit={handleSubmit}
             className="bg-card rounded-xl p-6 shadow-sm border border-border flex flex-col gap-4"
           >
 
-            {/* Name */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-foreground">
                 Name
               </label>
               <input
                 type="text"
+                name="name"
                 required
                 value={formData.name}
                 onChange={(e) =>
@@ -130,13 +123,13 @@ export default function Contact() {
               />
             </div>
 
-            {/* Email */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-foreground">
                 Email
               </label>
               <input
                 type="email"
+                name="email"
                 required
                 value={formData.email}
                 onChange={(e) =>
@@ -147,13 +140,13 @@ export default function Contact() {
               />
             </div>
 
-            {/* Message */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-foreground">
                 Message
               </label>
               <textarea
                 rows={4}
+                name="message"
                 required
                 value={formData.message}
                 onChange={(e) =>
@@ -164,7 +157,6 @@ export default function Contact() {
               />
             </div>
 
-            {/* Button */}
             <button
               type="submit"
               disabled={status === "sending"}
@@ -174,17 +166,15 @@ export default function Contact() {
               {status === "sending" ? "Sending..." : "Send Message"}
             </button>
 
-            {/* Success */}
             {status === "success" && (
               <p className="text-sm text-green-600 font-medium">
                 Message sent successfully!
               </p>
             )}
 
-            {/* Error */}
             {status === "error" && (
               <p className="text-sm text-red-600 font-medium">
-                {errorMessage || "Something went wrong. Please try again."}
+                Failed to send message. Try again.
               </p>
             )}
 
