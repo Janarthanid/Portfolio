@@ -1,4 +1,4 @@
-import { ExternalLink, Github } from "lucide-react"
+import { Github } from "lucide-react"
 
 const projects = [
   {
@@ -9,6 +9,7 @@ const projects = [
     tags: ["Flutter", "Dart", "Firebase", "Firestore", "Stripe API"],
     color: "from-primary/10 to-teal-50",
     borderColor: "border-primary/20",
+    github: "https://github.com/Janarthanid/EliteVents",
   },
   {
     title: "AI Resume Analyser",
@@ -18,6 +19,7 @@ const projects = [
     tags: ["Python", "Scikit-Learn", "Pandas", "Streamlit"],
     color: "from-coral/10 to-orange-50",
     borderColor: "border-coral/20",
+    github: "https://github.com/Janarthanid/AI-Resume-Analyzer",
   },
   {
     title: "Customer Churn Prediction",
@@ -27,6 +29,7 @@ const projects = [
     tags: ["Python", "Scikit-Learn", "Pandas", "Streamlit", "Matplotlib"],
     color: "from-purple/10 to-violet-50",
     borderColor: "border-purple/20",
+    github: "https://github.com/Janarthanid/Customer_Churn_Project",
   },
   {
     title: "Job Portal",
@@ -36,6 +39,7 @@ const projects = [
     tags: ["React.js", "Node.js", "Express.js", "MongoDB", "JWT Auth"],
     color: "from-blue-100 to-indigo-50",
     borderColor: "border-blue-200",
+    github: "https://github.com/Janarthanid",
   },
   {
     title: "Shiva Textiles Web Enhancement",
@@ -50,6 +54,7 @@ const projects = [
     ],
     color: "from-emerald-100 to-teal-50",
     borderColor: "border-emerald-200",
+    github: "https://www.figma.com/design/UzMY5JgkFvOefrKi5VpG9c/Untitled--Copy-?node-id=125-1560",
   },
 ]
 
@@ -93,20 +98,13 @@ export default function Projects() {
                 </div>
                 <div className="flex items-center gap-3 mt-5 pt-4 border-t border-border">
                   <a
-                    href="https://github.com/Janarthanid"
+                    href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <Github className="w-4 h-4" />
-                    Code
-                  </a>
-                  <a
-                    href="#"
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Live Demo
+                    View Project
                   </a>
                 </div>
               </div>

@@ -1,15 +1,11 @@
 import { NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 
-// In-memory store (demo purpose)
-const submissions = []
-
 export async function POST(request) {
   try {
     const body = await request.json()
     const { name, email, message } = body
 
-    // 🔹 Validation
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: "All fields are required" },
@@ -17,7 +13,6 @@ export async function POST(request) {
       )
     }
 
-    // 🔹 Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -26,7 +21,6 @@ export async function POST(request) {
       )
     }
 
-    // 🔹 Sanitize inputs
     const sanitized = {
       name: name.trim().slice(0, 100),
       email: email.trim().slice(0, 200),
@@ -34,9 +28,6 @@ export async function POST(request) {
       createdAt: new Date().toISOString(),
     }
 
-    submissions.push(sanitized)
-
-    // 🔹 Create transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -45,10 +36,9 @@ export async function POST(request) {
       },
     })
 
-    // 🔹 Send email
     await transporter.sendMail({
       from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_USER, // You receive message
+      to: process.env.EMAIL_USER,
       replyTo: sanitized.email,
       subject: `New Message from ${sanitized.name}`,
       html: `
