@@ -1,45 +1,34 @@
 "use client"
 
-import { useState, useRef } from "react"
-import emailjs from "@emailjs/browser"
+import { useState } from "react"
 import { Mail, Phone, MapPin, Send } from "lucide-react"
 
 export default function Contact() {
-  const formRef = useRef()
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  })
-
   const [status, setStatus] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setStatus("sending")
 
-    emailjs
-      .sendForm(
-        "service_yzp2lfe",   // ✅ Your Service ID
-        "7worc1a",           // ✅ Your Template ID
-        formRef.current,
-        "FDu1StKwCiM2mXtp0"    // ✅ Your Public Key
-      )
-      .then(
-        () => {
-          setStatus("success")
-          setFormData({ name: "", email: "", message: "" })
+    const form = e.target
+    const data = new FormData(form)
 
-          setTimeout(() => setStatus(null), 4000)
-        },
-        (error) => {
-          console.error(error)
-          setStatus("error")
+    const response = await fetch("https://formspree.io/f/xlgwqokd", {
+      method: "POST",
+      body: data,
+      headers: {
+        Accept: "application/json",
+      },
+    })
 
-          setTimeout(() => setStatus(null), 4000)
-        }
-      )
+    if (response.ok) {
+      setStatus("success")
+      form.reset()
+      setTimeout(() => setStatus(null), 4000)
+    } else {
+      setStatus("error")
+      setTimeout(() => setStatus(null), 4000)
+    }
   }
 
   return (
@@ -101,7 +90,6 @@ export default function Contact() {
 
           {/* Contact Form */}
           <form
-            ref={formRef}
             onSubmit={handleSubmit}
             className="bg-card rounded-xl p-6 shadow-sm border border-border flex flex-col gap-4"
           >
@@ -114,10 +102,6 @@ export default function Contact() {
                 type="text"
                 name="name"
                 required
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
                 className="px-4 py-2.5 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Your name"
               />
@@ -131,10 +115,6 @@ export default function Contact() {
                 type="email"
                 name="email"
                 required
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
                 className="px-4 py-2.5 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="your.email@example.com"
               />
@@ -148,10 +128,6 @@ export default function Contact() {
                 rows={4}
                 name="message"
                 required
-                value={formData.message}
-                onChange={(e) =>
-                  setFormData({ ...formData, message: e.target.value })
-                }
                 className="px-4 py-2.5 rounded-lg border border-input bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Your message..."
               />
